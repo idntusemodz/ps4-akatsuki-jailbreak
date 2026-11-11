@@ -33,7 +33,8 @@ const HX_MEM_LEVEL = (function () {
   try {
     const q = new URLSearchParams(location.search).get("mem");
     // Default to mem=2 (1.5M slots) -- the heavy mem=0 profile clusters
-    // zero-header-miss and placement-throw failures on 14.02.
+    // zero-header-miss and placement-throw failures on 14.02. A URL param
+    // of mem=0 can still force the heavy profile explicitly if needed.
     const n = parseInt(q || "2", 10);
     if (Number.isFinite(n) && n >= 0 && n <= 5) return n;
   } catch (e) {}
@@ -125,7 +126,7 @@ const HX_MEM =
 // 1.85 MB is enough. So the carrier starts small and grows only when
 // `sourceCovered` rejects an attempt, which keeps the largest piece of work
 // out of the window in which fakeHost's layout has to hold still.
-const CARRIER_CAP = 9000000; // always CARRIER_MAX; HX_MEM.slots caps groom only, not carrier
+const CARRIER_CAP = HX_MEM ? HX_MEM.slots : 12000000;
 
 let CARRIER_SLOTS = Math.min(CARRIER_CAP, 400000);
 let CARRIER_BYTES = CARRIER_SLOTS * 8;
