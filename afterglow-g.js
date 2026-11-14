@@ -945,12 +945,12 @@ async function loadEnabler(url, k, kbase, room, vorab) {
     return loadGoldhen(url, k, kbase, room, blob);
   }
   if (blob.length && blob[0] === 0xe9) {
-    say("[e] " + blob.length + " bytes, leading jmp -- raw payload path");
-    say("[e] raw payload -- gated step-loader: patchset + kernel padding route");
+    say("[e] " + blob.length + " bytes, leading jmp -- GoldHEN binary path");
+    say("[e] GoldHEN binary -- gated step-loader: patchset + kernel padding route");
     return loadRawKernel(url, k, kbase, room, blob);
   }
   say("[e] " + blob.length + " bytes: neither the composite image ("
-      + (GH.nlOff + GH.nlLen) + ") nor a raw payload (leading jmp) -- refusing");
+      + (GH.nlOff + GH.nlLen) + ") nor a GoldHEN binary (leading jmp) -- refusing");
   return false;
 }
 
@@ -2647,7 +2647,7 @@ async function attempt(ctx, opts) {
       iface.payload = await loadKpayloadSteps(k, kbase, hostFree);
       if (!iface.payload) say("[post] kpayload steps did not complete cleanly");
     } else if (want) {
-      say("[post] entering goldhen/payload path");
+      say("[post] mode=" + mode + " -- " + (mode === "goldhen" ? "GoldHEN enabler path" : "generic payload path"));
       iface.payload = (mode === "goldhen")
         ? await loadEnabler(want || "goldhen.bin", k, kbase, hostFree, prefetchedPayload)
         : await loadPayload(want || "hen.bin", prefetchedPayload);
